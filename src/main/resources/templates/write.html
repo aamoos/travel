@@ -15,16 +15,22 @@
                   <form action="#">
                     <div class="row form-group">
                       <div class="col-md-6 mb-3 mb-md-0">
-                        <label for="exampleFormControlSelect1">Example select</label>
-                        <select class="form-control" id="exampleFormControlSelect1">
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
+                        <label for="exampleFormControlSelect1">시</label>
+                        <select class="form-control parentsSelect" id="exampleFormControlSelect1">
+                          <option th:each="parentsDistrict: ${parentsDistrict}" th:text="${parentsDistrict.districtName}" th:value="${parentsDistrict.parentsIdx}"></option>
                         </select>
                       </div>
                     </div>
+
+                    <div class="row form-group">
+                      <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="exampleFormControlSelect2">구</label>
+                        <select class="form-control childSelect" id="exampleFormControlSelect2">
+                          <option th:each="childDistrict: ${childDistrict}" th:text="${childDistrict.districtName}" th:value="${childDistrict.childIdx}"></option>
+                        </select>
+                      </div>
+                    </div>
+
                     <div class="row form-group">
                       <div class="col-md-6 mb-3 mb-md-0">
                         <label class="text-white" for="fname">제목</label>
@@ -61,5 +67,27 @@
       <th:block th:replace="fragment/footer :: footerFragment"></th:block>
     </div>
   </main>
-
 </html>
+
+<script th:inline="javascript">
+
+  $(".parentsSelect").change(function(){
+    var parentsIdx = $(this).val();
+
+    $.ajax({
+	        type : 'POST'
+	       ,url : "/getChildDistrict"
+	       ,dataType : 'json'
+	       ,data : JSON.stringify(parentsIdx)
+	       ,contentType: 'application/json'
+	       ,success : function(result) {
+				console.log(result);
+	       },
+	       error: function(request, status, error) {
+
+	       }
+
+  });
+
+
+</script>
