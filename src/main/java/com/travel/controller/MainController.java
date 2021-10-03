@@ -4,19 +4,19 @@ import com.travel.entity.Board;
 import com.travel.entity.BoardFile;
 import com.travel.entity.ChildDistrict;
 import com.travel.reptositry.BoardFileRepository;
+import com.travel.reptositry.BoardRepository;
 import com.travel.reptositry.ChildDistrictRepository;
 import com.travel.reptositry.ParentsDistrictRepository;
 import com.travel.service.BoardService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -28,6 +28,7 @@ public class MainController {
     private final ChildDistrictRepository childDistrictRepository;
     private final BoardService boardService;
     private final BoardFileRepository boardFileRepository;
+    private final BoardRepository boardRepository;
 
     /**
      * 메인화면
@@ -43,10 +44,6 @@ public class MainController {
         }
 
         String childIdx = req.getParameter("childIdx");
-
-        if(childIdx == null){
-            childIdx = "1";
-        }
 
         List<BoardFile> galleryList = null;
 
@@ -68,13 +65,7 @@ public class MainController {
         model.addAttribute("galleryList", galleryList);
         model.addAttribute("totalSize", galleryList.size());
 
-        model.addAttribute("parentsIdx", Long.parseLong(parentsIdx));
-        model.addAttribute("childIdx", Long.parseLong(childIdx));
-
-        //부모 지역
-        model.addAttribute("parentsDistrict", parentsDistrictRepository.findByUseYn("Y"));
-        //자식 지역 (default로 서울 parentsIdx를 가진 자식항목 넣음)
-        model.addAttribute("childDistrict", childDistrictRepository.findByParentsIdxAndUseYn(Long.parseLong(parentsIdx), "Y"));
+        setParentsChildModel(model, parentsIdx, childIdx);
 
         return "main";
     }
@@ -95,10 +86,45 @@ public class MainController {
         return "write";
     }
 
+    /**
+     * 글수정
+     * @param model
+     * @return
+     */
+    @GetMapping("/update/{boardIdx}")
+    public String update(@PathVariable Long boardIdx, Model model){
+        log.info("boardIdx={}", boardIdx);
+
+        Board boardDetail = boardRepository.findByBoardIdx(boardIdx);
+
+        model.addAttribute("boardDetail", boardDetail);
+
+        //부모 지역
+        model.addAttribute("parentsDistrict", parentsDistrictRepository.findByUseYn("Y"));
+
+        //자식 지역 (default로 서울 parentsIdx를 가진 자식항목 넣음)
+        model.addAttribute("childDistrict", childDistrictRepository.findByParentsIdxAndUseYn(boardDetail.getParentsIdx(), "Y"));
+
+        //게시판 파일 리스트
+        model.addAttribute("boardFileInfo", boardService.selectBoardFile(boardIdx));
+
+        return "update";
+    }
+
     @ResponseBody
     @PostMapping("/write")
     public Long writeSubmit(@RequestBody Board board){
         log.info("params={}", board);
+
+        //fileIdxs 가공
+
+        if(board.getFileIdxs() != null){
+            board.setFileIdxs(((String) board.getFileIdxs()).replace("[", "").replace("]", "").replaceAll(" ",""));
+        }
+
+        if(board.getHashTag() != null){
+            board.setHashTag(board.getHashTag().replaceAll(" ", ""));
+        }
 
         //board 게시판 테이블 insert
         Long boardIdx = boardService.savePost(board);
@@ -109,6 +135,60 @@ public class MainController {
 
 
         return boardIdx;
+    };
+
+    /**
+     * 수정
+     * @param board
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/update")
+    public Long updateSubmit(@RequestBody Board board){
+        log.info("params={}", board);
+
+        if(board.getFileIdxs() != null){
+            board.setFileIdxs(((String) board.getFileIdxs()).replace("[", "").replace("]", "").replaceAll(" ",""));
+        }
+
+        if(board.getHashTag() != null){
+            board.setHashTag(board.getHashTag().replaceAll(" ", ""));
+        }
+
+        Long boardIdx = boardService.savePost(board);
+
+        //board 파일 테이블 insert
+        boardService.insertBoardFile(board);
+
+        System.out.println("deleteFileIdxs : " + board.getDeleteFileIdxs());
+
+        //넘어온 파일 삭제 시퀀스 삭제처리
+        if(!board.getDeleteFileIdxs().isEmpty()){
+            String deleteFileIdxs = (String) board.getDeleteFileIdxs();
+            String[] fileIdxsArray = deleteFileIdxs.split(",");
+            System.out.println("fileIdxsArray : " + fileIdxsArray);
+            //해당 시퀀스 삭제처리
+            for(int i=0; i<fileIdxsArray.length; i++){
+                String fileId = fileIdxsArray[i];
+                System.out.println("fileId : " + fileId);
+                boardService.deleteBoardFile(Long.parseLong(fileId));
+            }
+        }
+
+        return boardIdx;
+    }
+
+    @ResponseBody
+    @PostMapping("/delete")
+    public Long deleteSubmit(@RequestBody Board board){
+        log.info("params={}", board);
+
+        System.out.println("머야 : " + board.getBoardIdx());
+        //board 게시판 테이블 insert
+         boardService.deleteBoard(board);
+
+
+        return board.getBoardIdx();
     };
 
     /**
@@ -128,9 +208,52 @@ public class MainController {
      * @return
      */
     @GetMapping("/story")
-    public String story(){
+    public String story(HttpServletRequest req, Model model){
 
+        String parentsIdx = req.getParameter("parentsIdx");
+
+        if(parentsIdx == null){
+            parentsIdx = "1";
+        }
+
+        String childIdx = req.getParameter("childIdx");
+        setParentsChildModel(model, parentsIdx, childIdx);
+
+        List<Board> boardDetail = null;
+
+        if(parentsIdx == null && childIdx == null){
+            boardDetail = boardRepository.findAllByStoryList();
+        }
+
+        else if(parentsIdx != null && childIdx == null){
+            System.out.println("2번");
+            boardDetail = boardRepository.findAllByParentsIdx(parentsIdx);
+        }
+
+        else{
+            System.out.println("3번");
+            boardDetail = boardRepository.findAllByParentsIdxAndChildIdx(parentsIdx, childIdx);
+        }
+
+        model.addAttribute("boardDetail", boardDetail);
+        model.addAttribute("totalSize", boardDetail.size());
+        System.out.println(boardDetail.size());
         return "story";
     }
 
+    private void setParentsChildModel(Model model, String parentsIdx, String childIdx){
+
+        if(parentsIdx != null){
+            model.addAttribute("parentsIdx", Long.parseLong(parentsIdx));
+        }
+
+        if(childIdx != null){
+            model.addAttribute("childIdx", Long.parseLong(childIdx));
+        }
+
+        //부모 지역
+        model.addAttribute("parentsDistrict", parentsDistrictRepository.findByUseYn("Y"));
+        //자식 지역 (default로 서울 parentsIdx를 가진 자식항목 넣음)
+        model.addAttribute("childDistrict", childDistrictRepository.findByParentsIdxAndUseYn(Long.parseLong(parentsIdx), "Y"));
+    }
 }

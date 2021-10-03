@@ -12,6 +12,8 @@ public class BoardFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long boardFileIdx;
+
     private Long fileIdx;
     private Long boardIdx;
     private String useYn;

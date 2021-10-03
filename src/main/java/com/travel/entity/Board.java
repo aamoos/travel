@@ -47,7 +47,6 @@ public class Board {
     @UpdateTimestamp
     private LocalDateTime uptDate;
 
-    @Transient
     private String fileIdxs;
 
     @Transient

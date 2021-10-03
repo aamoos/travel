@@ -4,31 +4,121 @@
       layout:decorator="layout/default_Layout">
 
   <main class="main-content" th:block layout:fragment="content">
+    <input type="hidden" id="parentsIdx" th:value="${parentsIdx}"/>
+    <input type="hidden" id="childIdx" th:value="${childIdx}"/>
+    <div class="row form-group">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <select class="form-control parentsSelect" id="exampleFormControlSelect1">
+          <option th:selected="${parentsDistrict.parentsIdx eq parentsIdx}" th:each="parentsDistrict: ${parentsDistrict}" th:text="${parentsDistrict.districtName}" th:value="${parentsDistrict.parentsIdx}"></option>
+        </select>
+        <select class="form-control childSelect" id="exampleFormControlSelect2">
+          <option th:selected="${childDistrict.childIdx eq childIdx}" th:each="childDistrict: ${childDistrict}" th:text="${childDistrict.districtName}" th:value="${childDistrict.childIdx}"></option>
+        </select>
+      </div>
+    </div>
     <div class="container-fluid photos">
-      <div class="row justify-content-center">
-        
+
+      <div class="row pt-4 mb-5 text-center">
+        <div class="col-12">
+          <h2 class="text-white mb-4">[[${totalSize}]] Story</h2>
+
+        </div>
+      </div>
+
+      <div th:each="boardDetail : ${boardDetail}" class="row justify-content-center">
         <div class="col-md-6 pt-4">
           <figure class="mb-5" data-aos="fade-up">
-            <img src="images/img_1.jpg" alt="Image" class="img-fluid">
+            <a th:each=" fileIdxs, index : ${#strings.arraySplit(boardDetail.fileIdxs,',')}" th:href="@{/api/img/print/} + ${fileIdxs}" class="d-block photo-item" data-fancybox="gallery">
+              <img th:if="${index.index == 0}" th:src="@{/api/img/print/} + ${fileIdxs}" alt="Image" class="img-fluid">
+              <div class="photo-text-more">
+                <span class="icon icon-search"></span>
+              </div>
+            </a>
           </figure>
 
-          <h2 class="text-white mb-4" data-aos="fade-up">Hey There! I'm Rhea</h2>
-
+          <h2 class="text-white mb-4" data-aos="fade-up" th:text="${boardDetail.boardTitle}">Hey There! I'm Rhea</h2>
           <div class="row" data-aos="fade-up">
             <div class="col-md-12">
-              <p>Lorem ipsum dolor sit amet, consectetur <a href="#">adipisicing</a> elit. Ipsa explicabo quasi cum, laudantium neque at veniam itaque atque <a href="#">necessitatibus</a> temporibus! Beatae sit soluta magni neque autem, suscipit dolorem, quo alias.</p>
-              <p>Similique deserunt sit accusamus ipsum optio. Quia, sapiente saepe culpa ad nemo velit, <a href="#">veritatis</a> numquam impedit voluptate quo tempore. Perferendis suscipit dolores, ducimus esse cupiditate possimus quae quis iusto rem?</p>
-              <p>Excepturi soluta maxime velit vitae tempore corporis, aliquid quidem modi libero! Optio minima esse hic repellendus a dolor perferendis dolore impedit quis et! Minus maxime itaque beatae totam eos reiciendis.</p>
-              <p class="mb-5">Ad veritatis eos dicta, animi et voluptates iusto, excepturi corporis amet, laboriosam, officiis libero. Odio excepturi aliquid suscipit nobis odit. Tenetur expedita impedit error consequatur sunt voluptatum voluptate voluptatem vitae!</p>
-
-              <p cass="mt-4">Thanks! <br> Rhea M.</p>
+              <p th:text="${boardDetail.boardContent}">Similique deserunt sit accusamus ipsum optio. Quia, sapiente saepe culpa ad nemo velit, <a href="#">veritatis</a> numquam impedit voluptate quo tempore. Perferendis suscipit dolores, ducimus esse cupiditate possimus quae quis iusto rem?</p>
+              <p>
+                <a th:each=" hashTag, index : ${#strings.arraySplit(boardDetail.hashTag,',')}" href="#">#[[${hashTag}]] </a>
+              </p>
             </div>
           </div>
+          <img th:onclick="|javascript:deleteStory('${boardDetail.boardIdx}')|" data-aos="fade-up"  style="width:30px; height:auto; vertical-align: middle; cursor: pointer; float: right;" src="/images/delete_story.png"/>
+          <a th:href="@{/update/} + ${boardDetail.boardIdx}">
+            <img data-aos="fade-up" style="width:30px; height:auto; vertical-align: middle; cursor: pointer; float: right;" src="/images/modify_story.png"/>
+          </a>
         </div>
-
       </div>
 
       <th:block th:replace="fragment/footer :: footerFragment"></th:block>
     </div>
   </main>
 </html>
+
+<script th:inline="javascript">
+
+  //부모 지역 변경시
+  $(".parentsSelect").change(function(){
+    var parentsIdx = $(this).val();
+
+    $.ajax({
+      type : 'POST'
+      ,url : "/getChildDistrict"
+      ,dataType : 'json'
+      ,data : JSON.stringify(parentsIdx)
+      ,contentType: 'application/json'
+      ,success : function(result) {
+
+        var html = "";
+
+        for(var i=0; i<result.length; i++){
+          console.log(result[i]);
+          var childIdx = result[i].childIdx;
+          var districtName = result[i].districtName;
+          html+= "<option value='"+childIdx+"'>"+districtName+"</option>"
+        }
+        console.log(html);
+        $(".childSelect").html(html);
+        location.href="/story?parentsIdx="+parentsIdx;
+      },
+      error: function(request, status, error) {
+
+      }
+    });
+  });
+
+  //자식 지역 변경시
+  $(".childSelect").change(function(){
+    var parentsIdx = $("#parentsIdx").val();
+    var childIdx = $(this).val();
+     location.href="/story?parentsIdx="+parentsIdx+"&childIdx="+childIdx;
+  });
+
+  //스토리 삭제
+  function deleteStory(boardIdx){
+
+    if(confirm("정말로 삭제하시겠습니까?")) {
+      var params = {
+        boardIdx : boardIdx
+      }
+
+      $.ajax({
+         type : 'POST'
+        ,url : "/delete"
+        ,dataType : 'json'
+        ,data : JSON.stringify(params)
+        ,contentType: 'application/json'
+        ,success : function(result) {
+            alert("해당글이 정상적으로 삭제되었습니다.");
+            location.href="/";
+        },
+        error: function(request, status, error) {
+
+        }
+    })
+    }
+  }
+
+</script>
