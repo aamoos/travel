@@ -38,6 +38,9 @@ public class File {
     @CreationTimestamp
     private LocalDateTime regDate;
 
+//    @OneToOne(mappedBy = "file")
+//    private BoardFile boardFile;
+
     public File(String origNm, String logiNm, String logiPath, String ext, Long size, String contentType) {
         this.origNm = origNm;
         this.logiNm = logiNm;

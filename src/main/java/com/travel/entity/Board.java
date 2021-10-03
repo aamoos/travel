@@ -1,6 +1,7 @@
 package com.travel.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 public class Board {
 
     @Id
@@ -44,5 +46,11 @@ public class Board {
     //update시에 현재시간을 읽여서 저장
     @UpdateTimestamp
     private LocalDateTime uptDate;
+
+    @Transient
+    private String fileIdxs;
+
+    @Transient
+    private String deleteFileIdxs;
 
 }

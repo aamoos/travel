@@ -33,28 +33,45 @@
 
                     <div class="row form-group">
                       <div class="col-md-6 mb-3 mb-md-0">
-                        <label class="text-white" for="fname">제목</label>
-                        <input type="text" id="fname" class="form-control">
+                        <label class="text-white" for="boardTitle">제목</label>
+                        <input type="text" id="boardTitle" class="form-control">
                       </div>
                     </div>
 
                     <div class="row form-group mb-5">
                       <div class="col-md-12">
-                        <label class="text-white" for="message">내용</label>
-                        <textarea name="message" id="message" cols="30" rows="7" class="form-control" placeholder="Write your notes or questions here..."></textarea>
+                        <label class="text-white" for="boardContent">내용</label>
+                        <textarea name="message" id="boardContent" cols="30" rows="7" class="form-control" placeholder="Write your notes or questions here..."></textarea>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <form name="dataForm" id="dataForm" onsubmit="return registerAction()">
+                        <button id="btn-upload" onclick="fileClick()" type="button" style="border: 1px solid #ddd; outline: none;">파일 추가</button>
+                        <input id="input_file" onChange="fileChange(this)" multiple="multiple" type="file" style="display:none;">
+                        <span style="font-size:10px; color: gray;">※첨부파일은 최대 10개까지 등록이 가능합니다.</span>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="data_file_txt" id="data_file_txt">
+                          <span>첨부 파일</span>
+                          <br />
+                          <div id="articlefileChange">
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+
+                    <div class="row form-group">
+                      <div class="col-md-12">
+                        <label class="text-white" for="hashTag">해시태그</label>
+                        <input type="email" id="hashTag" class="form-control">
                       </div>
                     </div>
 
                     <div class="row form-group">
                       <div class="col-md-12">
-                        <label class="text-white" for="email">해시태그</label>
-                        <input type="email" id="email" class="form-control">
-                      </div>
-                    </div>
-
-                    <div class="row form-group">
-                      <div class="col-md-12">
-                        <input type="submit" value="Send Message" class="btn btn-primary btn-md text-white">
+                        <input type="button" value="Send Message" onclick="registerAction()" class="btn btn-primary btn-md text-white">
                       </div>
                     </div>
                   </form>
@@ -71,23 +88,187 @@
 
 <script th:inline="javascript">
 
+  //부모 지역 변경시
   $(".parentsSelect").change(function(){
     var parentsIdx = $(this).val();
 
     $.ajax({
-	        type : 'POST'
-	       ,url : "/getChildDistrict"
-	       ,dataType : 'json'
-	       ,data : JSON.stringify(parentsIdx)
-	       ,contentType: 'application/json'
-	       ,success : function(result) {
-				console.log(result);
-	       },
-	       error: function(request, status, error) {
+      type : 'POST'
+      ,url : "/getChildDistrict"
+      ,dataType : 'json'
+      ,data : JSON.stringify(parentsIdx)
+      ,contentType: 'application/json'
+      ,success : function(result) {
 
-	       }
+        var html = "";
 
+        for(var i=0; i<result.length; i++){
+          console.log(result[i]);
+          var childIdx = result[i].childIdx;
+          var districtName = result[i].districtName;
+          html+= "<option value='"+childIdx+"'>"+districtName+"</option>"
+        }
+        console.log(html);
+        $(".childSelect").html(html);
+
+      },
+      error: function(request, status, error) {
+
+      }
+    });
   });
+
+  var fileCount = 0;
+
+	//전체 업로드 갯수
+	var totalCount = 10;
+
+	//파일 고유 넘버
+	var fileNum = 0;
+
+	//첨부파일 배열
+	var content_files = new Array();
+
+	//파일 시퀀스들
+	var fileIdxs = "";
+
+	//파일 추가 클릭
+	function fileClick(){
+		$("#input_file").click();
+	}
+
+	//파일 change 이벤트
+	function fileChange(target){
+
+      var files = target.files;
+
+      //imageUrl
+      var imageUrl = URL.createObjectURL(event.target.files[0]);
+
+      //파일 배열 담기
+      var filesArr = Array.prototype.slice.call(files);
+
+      if(fileCount + filesArr.length > totalCount){
+          alert("파일은 최대 "+totalCount+"개까지 업로드 할 수 있습니다.");
+          return false;
+      }
+
+      else{
+          fileCount = fileCount + filesArr.length;
+      }
+
+      // 각각의 파일 배열담기 및 기타
+      filesArr.forEach(function (f) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+          content_files.push(f);
+          console.log(content_files)
+          $('#articlefileChange').append(
+              '<div id="file' + fileNum + '" onclick="fileDelete(\'file' + fileNum + '\')">'
+              + "<img src = '"+imageUrl+"' style='width:300px; height:auto; vertical-align: middle; cursor: pointer;'></img>"
+              + "<br>"
+              + '<font style="font-size:12px">' + f.name + '</font>'
+              + '<div/>'
+          );
+          fileNum++;
+        };
+        reader.readAsDataURL(f);
+      });
+
+      //초기화 한다.
+      $("#input_file").val("");
+
+	}
+
+	//파일 삭제
+	function fileDelete(fileNum){
+		var no = fileNum.replace(/[^0-9]/g, "");
+	    content_files[no].is_delete = true;
+		$('#' + fileNum).remove();
+		fileCount --;
+	}
+
+	//파일 저장
+	function registerAction(){
+		console.log(content_files);
+		var form = $("form")[0];
+	 	var formData = new FormData(form);
+		for (var x = 0; x < content_files.length; x++) {
+			// 삭제 안한것만 담아 준다.
+			if(!content_files[x].is_delete){
+				 formData.append("article_file", content_files[x]);
+				 formData.append("filePath", "/main");
+			}
+		}
+
+	   /*
+	   * 파일업로드 multiple ajax처리
+	   */
+		$.ajax({
+	   	      type: "POST",
+	   	   	  enctype: "multipart/form-data",
+	   	      url: "/file-upload",
+	       	  data : formData,
+	       	  processData: false,
+	   	      contentType: false,
+	   	      success: function (data) {
+
+	   	    	console.log(data)
+	   	    	//파일 시퀀스들
+	   	    	fileIdxs = data.fileIdxs;
+	   	    	if(data.result == "OK"){
+	   	    		writeSubmit();
+				} else
+					alert("서버내 오류로 처리가 지연되고있습니다. 잠시 후 다시 시도해주세요");
+	   	      },
+	   	      error: function (xhr, status, error) {
+	   	    	alert("서버오류로 지연되고있습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+			}
+		});
+	}
+
+  //게시판 등록
+	function writeSubmit(){
+
+		//step2. 게시판 등록
+		var params = {
+			 parentsIdx : $(".parentsSelect").find("option:selected").val()
+			,childIdx : $(".childSelect").find("option:selected").val()
+			,boardTitle : $.trim($("#boardTitle").val())
+			,boardContent : $.trim($("#boardContent").val())
+			,hashTag : $.trim($("#hashTag").val())
+			,useYn : "Y"
+			,fileIdxs : fileIdxs
+			,attachCount : $("#articlefileChange").find("font").length
+		}
+
+        console.log(params);
+
+		if(params.boardTitle == ""){
+			alert("제목을 입력해주세요.");
+			return false;
+		}
+
+		else if(params.boardContent == ""){
+			alert("내용을 입력해주세요.");
+			return false;
+		}
+
+		$.ajax({
+	         type : 'POST'
+	        ,url : "/write"
+	        ,dataType : 'json'
+	        ,data : JSON.stringify(params)
+	        ,contentType: 'application/json'
+	        ,success : function(result) {
+				alert("해당글이 정상적으로 등록되었습니다.");
+				location.href="/";
+	        },
+	        error: function(request, status, error) {
+
+	        }
+	    })
+	}
 
 
 </script>

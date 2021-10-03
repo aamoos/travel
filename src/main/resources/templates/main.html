@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/default_Layout">
+<body>
+
+  <main class="main-content" th:block layout:fragment="content">
+    <input type="hidden" id="parentsIdx" th:value="${parentsIdx}"/>
+    <input type="hidden" id="childIdx" th:value="${childIdx}"/>
+
+    <div class="row form-group">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <select class="form-control parentsSelect" id="exampleFormControlSelect1">
+          <option th:selected="${parentsDistrict.parentsIdx eq parentsIdx}" th:each="parentsDistrict: ${parentsDistrict}" th:text="${parentsDistrict.districtName}" th:value="${parentsDistrict.parentsIdx}"></option>
+        </select>
+        <select class="form-control childSelect" id="exampleFormControlSelect2">
+          <option th:selected="${childDistrict.childIdx eq childIdx}" th:each="childDistrict: ${childDistrict}" th:text="${childDistrict.districtName}" th:value="${childDistrict.childIdx}"></option>
+        </select>
+      </div>
+    </div>
+
+    <div class="container-fluid photos">
+      <div class="row pt-4 mb-5 text-center">
+        <div class="col-12">
+          <h2 class="text-white mb-4" th:text="${totalSize} + Photos">19 Photos</h2>
+        </div>
+      </div>
+
+      <div class="row align-items-stretch">
+
+        <div th:each="galleryList : ${galleryList}" class="col-6 col-md-6 col-lg-6" data-aos="fade-up">
+          <a th:href="@{/api/img/print/} + ${galleryList.fileIdx}" class="d-block photo-item" data-fancybox="gallery">
+            <img th:src="@{/api/img/print/} + ${galleryList.fileIdx}" alt="Image" class="img-fluid">
+            <div class="photo-text-more">
+              <span class="icon icon-search"></span>
+            </div>
+          </a>
+        </div>
+      </div>
+      <th:block th:replace="fragment/footer :: footerFragment"></th:block>
+    </div>
+  </main>
+</body>
+</html>
+
+<script th:inline="javascript">
+
+  //부모 지역 변경시
+  $(".parentsSelect").change(function(){
+    var parentsIdx = $(this).val();
+
+    $.ajax({
+      type : 'POST'
+      ,url : "/getChildDistrict"
+      ,dataType : 'json'
+      ,data : JSON.stringify(parentsIdx)
+      ,contentType: 'application/json'
+      ,success : function(result) {
+
+        var html = "";
+
+        for(var i=0; i<result.length; i++){
+          console.log(result[i]);
+          var childIdx = result[i].childIdx;
+          var districtName = result[i].districtName;
+          html+= "<option value='"+childIdx+"'>"+districtName+"</option>"
+        }
+        console.log(html);
+        $(".childSelect").html(html);
+        location.href="/?parentsIdx="+parentsIdx;
+      },
+      error: function(request, status, error) {
+
+      }
+    });
+  });
+
+  //자식 지역 변경시
+  $(".childSelect").change(function(){
+    var parentsIdx = $("#parentsIdx").val();
+    var childIdx = $(this).val();
+     location.href="/?parentsIdx="+parentsIdx+"&childIdx="+childIdx;
+  });
+
+</script>

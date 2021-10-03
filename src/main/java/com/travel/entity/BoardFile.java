@@ -12,13 +12,17 @@ public class BoardFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fileId;
+    private Long fileIdx;
     private Long boardIdx;
     private String useYn;
 
-    public BoardFile(Long boardIdx, Long fileId, String useYn) {
+//    @OneToOne
+//    @JoinColumn(name="fileIdx")
+//    private File file;
+
+    public BoardFile(Long boardIdx, Long fileIdx, String useYn) {
         this.boardIdx = boardIdx;
-        this.fileId = fileId;
+        this.fileIdx = fileIdx;
         this.useYn = useYn;
     }
 }
