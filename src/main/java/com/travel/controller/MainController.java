@@ -67,7 +67,7 @@ public class MainController {
 
         setParentsChildModel(model, parentsIdx, childIdx);
 
-        return "//main";
+        return "board/main";
     }
 
     /**
@@ -83,7 +83,7 @@ public class MainController {
         //자식 지역 (default로 서울 parentsIdx를 가진 자식항목 넣음)
         model.addAttribute("childDistrict", childDistrictRepository.findByParentsIdxAndUseYn(1L, "Y"));
 
-        return "write";
+        return "board/write";
     }
 
     /**
@@ -108,7 +108,7 @@ public class MainController {
         //게시판 파일 리스트
         model.addAttribute("boardFileInfo", boardService.selectBoardFile(boardIdx));
 
-        return "update";
+        return "board/update";
     }
 
     @ResponseBody
@@ -238,7 +238,7 @@ public class MainController {
         model.addAttribute("boardDetail", boardDetail);
         model.addAttribute("totalSize", boardDetail.size());
         System.out.println(boardDetail.size());
-        return "story";
+        return "board/story";
     }
 
     private void setParentsChildModel(Model model, String parentsIdx, String childIdx){
