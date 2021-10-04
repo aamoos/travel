@@ -22,8 +22,8 @@ public interface BoardRepository extends CrudRepository<Board, Long> {
                     " ,T1.REG_DATE\n" +
                     " ,T1.UPT_DATE\n" +
                     " ,T1.USE_YN\n" +
-                    " ,(SELECT GROUP_CONCAT( T2.FILE_IDX SEPARATOR ',' ) FROM BOARD_FILE T2 WHERE T2.BOARD_IDX = T1.BOARD_IDX AND T2.USE_YN = 'Y' ) AS FILE_IDXS \n" +
-                    " ,(SELECT COUNT(*) FROM BOARD_FILE T3 WHERE T3.BOARD_IDX = T1.BOARD_IDX AND T3.USE_YN = 'Y') AS ATTACH_COUNT \n" +
+                    " ,(SELECT GROUP_CONCAT( T2.FILE_IDX SEPARATOR ',' ) FROM board_file T2 WHERE T2.BOARD_IDX = T1.BOARD_IDX AND T2.USE_YN = 'Y' ) AS FILE_IDXS \n" +
+                    " ,(SELECT COUNT(*) FROM board_file T3 WHERE T3.BOARD_IDX = T1.BOARD_IDX AND T3.USE_YN = 'Y') AS ATTACH_COUNT \n" +
                     "FROM \n" +
                     " BOARD T1\n" +
                     "WHERE\n" +
@@ -43,8 +43,8 @@ public interface BoardRepository extends CrudRepository<Board, Long> {
                     " ,T1.REG_DATE\n" +
                     " ,T1.UPT_DATE\n" +
                     " ,T1.USE_YN\n" +
-                    " ,(SELECT GROUP_CONCAT( T2.FILE_IDX SEPARATOR ',' ) FROM BOARD_FILE T2 WHERE T2.BOARD_IDX = T1.BOARD_IDX AND T2.USE_YN = 'Y' ) AS FILE_IDXS \n" +
-                    " ,(SELECT COUNT(*) FROM BOARD_FILE T3 WHERE T3.BOARD_IDX = T1.BOARD_IDX AND T3.USE_YN = 'Y') AS ATTACH_COUNT \n" +
+                    " ,(SELECT GROUP_CONCAT( T2.FILE_IDX SEPARATOR ',' ) FROM board_file T2 WHERE T2.BOARD_IDX = T1.BOARD_IDX AND T2.USE_YN = 'Y' ) AS FILE_IDXS \n" +
+                    " ,(SELECT COUNT(*) FROM board_file T3 WHERE T3.BOARD_IDX = T1.BOARD_IDX AND T3.USE_YN = 'Y') AS ATTACH_COUNT \n" +
                     "FROM \n" +
                     " board T1\n" +
                     "WHERE\n" +
@@ -65,8 +65,8 @@ public interface BoardRepository extends CrudRepository<Board, Long> {
                     " ,T1.REG_DATE\n" +
                     " ,T1.UPT_DATE\n" +
                     " ,T1.USE_YN\n" +
-                    " ,(SELECT GROUP_CONCAT( T2.FILE_IDX SEPARATOR ',' ) FROM BOARD_FILE T2 WHERE T2.BOARD_IDX = T1.BOARD_IDX AND T2.USE_YN = 'Y' ) AS FILE_IDXS \n" +
-                    " ,(SELECT COUNT(*) FROM BOARD_FILE T3 WHERE T3.BOARD_IDX = T1.BOARD_IDX AND T3.USE_YN = 'Y') AS ATTACH_COUNT \n" +
+                    " ,(SELECT GROUP_CONCAT( T2.FILE_IDX SEPARATOR ',' ) FROM board_file T2 WHERE T2.BOARD_IDX = T1.BOARD_IDX AND T2.USE_YN = 'Y' ) AS FILE_IDXS \n" +
+                    " ,(SELECT COUNT(*) FROM board_file T3 WHERE T3.BOARD_IDX = T1.BOARD_IDX AND T3.USE_YN = 'Y') AS ATTACH_COUNT \n" +
                     "FROM \n" +
                     " board T1\n" +
                     "WHERE\n" +
