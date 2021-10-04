@@ -67,7 +67,7 @@ public class MainController {
 
         setParentsChildModel(model, parentsIdx, childIdx);
 
-        return "main";
+        return "//main";
     }
 
     /**
