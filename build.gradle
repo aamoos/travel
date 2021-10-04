@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
 sourceCompatibility = '11'
 
 configurations {
@@ -37,6 +37,8 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/commons-lang/commons-lang
 	implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+
+	implementation("org.mariadb.jdbc:mariadb-java-client")
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'

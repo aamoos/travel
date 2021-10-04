@@ -16,9 +16,9 @@ public interface BoardFileRepository extends CrudRepository<BoardFile, Long> {
                     " ,T1.USE_YN" +
                     " ,T1.BOARD_FILE_IDX" +
                     " FROM" +
-                    " BOARD_FILE T1" +
-                    " ,FILE T2" +
-                    " ,BOARD T3"+
+                    " board_file T1" +
+                    " ,file T2" +
+                    " ,board T3"+
                     " WHERE" +
                     " T1.FILE_IDX = T2.FILE_IDX" +
                     " AND T1.BOARD_IDX = T3.BOARD_IDX"+
@@ -39,9 +39,9 @@ public interface BoardFileRepository extends CrudRepository<BoardFile, Long> {
                     " ,T3.BOARD_CONTENT" +
                     " ,T1.BOARD_FILE_IDX" +
                     " FROM" +
-                    " BOARD_FILE T1" +
-                    " ,FILE T2" +
-                    " ,BOARD T3"+
+                    " board_file T1" +
+                    " ,file T2" +
+                    " ,board T3"+
                     " WHERE" +
                     " T1.FILE_IDX = T2.FILE_IDX" +
                     " AND T1.BOARD_IDX = T3.BOARD_IDX"+
@@ -63,9 +63,9 @@ public interface BoardFileRepository extends CrudRepository<BoardFile, Long> {
                     " ,T3.BOARD_CONTENT" +
                     " ,T1.BOARD_FILE_IDX" +
                     " FROM" +
-                    " BOARD_FILE T1" +
-                    " ,FILE T2" +
-                    " ,BOARD T3"+
+                    " board_file T1" +
+                    " ,file T2" +
+                    " ,board T3"+
                     " WHERE" +
                     " T1.FILE_IDX = T2.FILE_IDX" +
                     " AND T1.BOARD_IDX = T3.BOARD_IDX"+
