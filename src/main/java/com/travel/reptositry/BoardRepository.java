@@ -28,7 +28,7 @@ public interface BoardRepository extends CrudRepository<Board, Long> {
                     " board T1\n" +
                     "WHERE\n" +
                     "T1.USE_YN = 'Y'\n" +
-                    "ORDER BY T1.REG_DATE ASC", nativeQuery = true
+                    "ORDER BY T1.REG_DATE DESC", nativeQuery = true
     )
     List<Board> findAllByStoryList();
 
