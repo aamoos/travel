@@ -83,7 +83,7 @@
         }
         console.log(html);
         $(".childSelect").html(html);
-        location.href="/story?parentsIdx="+parentsIdx;
+        location.href="/?parentsIdx="+parentsIdx;
       },
       error: function(request, status, error) {
 
@@ -95,7 +95,7 @@
   $(".childSelect").change(function(){
     var parentsIdx = $("#parentsIdx").val();
     var childIdx = $(this).val();
-     location.href="/story?parentsIdx="+parentsIdx+"&childIdx="+childIdx;
+     location.href="/?parentsIdx="+parentsIdx+"&childIdx="+childIdx;
   });
 
   //스토리 삭제
@@ -114,7 +114,7 @@
         ,contentType: 'application/json'
         ,success : function(result) {
             alert("해당글이 정상적으로 삭제되었습니다.");
-            location.href="/story";
+            location.href="/";
         },
         error: function(request, status, error) {
 
