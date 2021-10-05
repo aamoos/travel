@@ -188,6 +188,12 @@
 
 	//파일 저장
 	function registerAction(){
+
+	    if(fileCount == 0){
+	      alert("이미지를 한개라도 추가해야 합니다.");
+	      return false;
+	    }
+
 		console.log(content_files);
 		var form = $("form")[0];
 	 	var formData = new FormData(form);
@@ -261,7 +267,7 @@
 	        ,contentType: 'application/json'
 	        ,success : function(result) {
 				alert("해당글이 정상적으로 등록되었습니다.");
-				location.href="/";
+				location.href="/story";
 	        },
 	        error: function(request, status, error) {
 

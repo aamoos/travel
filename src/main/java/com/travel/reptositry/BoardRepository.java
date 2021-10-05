@@ -25,7 +25,7 @@ public interface BoardRepository extends CrudRepository<Board, Long> {
                     " ,(SELECT GROUP_CONCAT( T2.FILE_IDX SEPARATOR ',' ) FROM board_file T2 WHERE T2.BOARD_IDX = T1.BOARD_IDX AND T2.USE_YN = 'Y' ) AS FILE_IDXS \n" +
                     " ,(SELECT COUNT(*) FROM board_file T3 WHERE T3.BOARD_IDX = T1.BOARD_IDX AND T3.USE_YN = 'Y') AS ATTACH_COUNT \n" +
                     "FROM \n" +
-                    " BOARD T1\n" +
+                    " board T1\n" +
                     "WHERE\n" +
                     "T1.USE_YN = 'Y'\n" +
                     "ORDER BY T1.REG_DATE ASC", nativeQuery = true

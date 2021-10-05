@@ -11,9 +11,11 @@
     <div class="row form-group">
       <div class="col-md-6 mb-3 mb-md-0">
         <select class="form-control parentsSelect" id="exampleFormControlSelect1">
+          <option value="0">전체</option>
           <option th:selected="${parentsDistrict.parentsIdx eq parentsIdx}" th:each="parentsDistrict: ${parentsDistrict}" th:text="${parentsDistrict.districtName}" th:value="${parentsDistrict.parentsIdx}"></option>
         </select>
         <select class="form-control childSelect" id="exampleFormControlSelect2">
+          <option value="">전체</option>
           <option th:selected="${childDistrict.childIdx eq childIdx}" th:each="childDistrict: ${childDistrict}" th:text="${childDistrict.districtName}" th:value="${childDistrict.childIdx}"></option>
         </select>
       </div>

@@ -39,20 +39,23 @@ public class MainController {
 
         String parentsIdx = req.getParameter("parentsIdx");
 
-        if(parentsIdx == null){
-            parentsIdx = "1";
+        //전체 선택일경우
+        if(!isStringEmpty(parentsIdx)){
+            if(parentsIdx.equals("0")){
+                parentsIdx = null;
+            }
         }
 
         String childIdx = req.getParameter("childIdx");
 
         List<BoardFile> galleryList = null;
 
-        if(parentsIdx == null && childIdx == null){
+        if(isStringEmpty(parentsIdx) && isStringEmpty(childIdx)){
             System.out.println("1번");
             galleryList = boardFileRepository.findAllByGalleryList();
         }
 
-        else if(parentsIdx != null && childIdx == null){
+        else if(!isStringEmpty(parentsIdx) && isStringEmpty(childIdx)){
             System.out.println("2번");
             galleryList = boardFileRepository.findAllByParentsIdx(parentsIdx);
         }
@@ -118,11 +121,11 @@ public class MainController {
 
         //fileIdxs 가공
 
-        if(board.getFileIdxs() != null){
+        if(!isStringEmpty(board.getFileIdxs())){
             board.setFileIdxs(((String) board.getFileIdxs()).replace("[", "").replace("]", "").replaceAll(" ",""));
         }
 
-        if(board.getHashTag() != null){
+        if(!isStringEmpty(board.getHashTag())){
             board.setHashTag(board.getHashTag().replaceAll(" ", ""));
         }
 
@@ -147,11 +150,11 @@ public class MainController {
     public Long updateSubmit(@RequestBody Board board){
         log.info("params={}", board);
 
-        if(board.getFileIdxs() != null){
+        if(!isStringEmpty(board.getFileIdxs())){
             board.setFileIdxs(((String) board.getFileIdxs()).replace("[", "").replace("]", "").replaceAll(" ",""));
         }
 
-        if(board.getHashTag() != null){
+        if(!isStringEmpty(board.getHashTag())){
             board.setHashTag(board.getHashTag().replaceAll(" ", ""));
         }
 
@@ -212,8 +215,11 @@ public class MainController {
 
         String parentsIdx = req.getParameter("parentsIdx");
 
-        if(parentsIdx == null){
-            parentsIdx = "1";
+        //전체 선택일경우
+        if(!isStringEmpty(parentsIdx)){
+            if(parentsIdx.equals("0")){
+                parentsIdx = null;
+            }
         }
 
         String childIdx = req.getParameter("childIdx");
@@ -221,11 +227,11 @@ public class MainController {
 
         List<Board> boardDetail = null;
 
-        if(parentsIdx == null && childIdx == null){
+        if(isStringEmpty(parentsIdx) && isStringEmpty(childIdx)){
             boardDetail = boardRepository.findAllByStoryList();
         }
 
-        else if(parentsIdx != null && childIdx == null){
+        else if(!isStringEmpty(parentsIdx) && isStringEmpty(childIdx)){
             System.out.println("2번");
             boardDetail = boardRepository.findAllByParentsIdx(parentsIdx);
         }
@@ -243,17 +249,25 @@ public class MainController {
 
     private void setParentsChildModel(Model model, String parentsIdx, String childIdx){
 
-        if(parentsIdx != null){
+        if(!isStringEmpty(parentsIdx)){
             model.addAttribute("parentsIdx", Long.parseLong(parentsIdx));
         }
 
-        if(childIdx != null){
+        if(!isStringEmpty(childIdx)){
             model.addAttribute("childIdx", Long.parseLong(childIdx));
         }
 
         //부모 지역
         model.addAttribute("parentsDistrict", parentsDistrictRepository.findByUseYn("Y"));
-        //자식 지역 (default로 서울 parentsIdx를 가진 자식항목 넣음)
-        model.addAttribute("childDistrict", childDistrictRepository.findByParentsIdxAndUseYn(Long.parseLong(parentsIdx), "Y"));
+
+        if(!isStringEmpty(parentsIdx)){
+            //자식 지역 (default로 서울 parentsIdx를 가진 자식항목 넣음)
+            model.addAttribute("childDistrict", childDistrictRepository.findByParentsIdxAndUseYn(Long.parseLong(parentsIdx), "Y"));
+        }
+    }
+
+    //널 빈값 체크
+    static boolean isStringEmpty(String str) {
+        return str == null || str.isEmpty();
     }
 }
