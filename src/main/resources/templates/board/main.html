@@ -69,7 +69,7 @@
         }
         console.log(html);
         $(".childSelect").html(html);
-        location.href="/?parentsIdx="+parentsIdx;
+        location.href="/main?parentsIdx="+parentsIdx;
       },
       error: function(request, status, error) {
 
@@ -81,7 +81,7 @@
   $(".childSelect").change(function(){
     var parentsIdx = $("#parentsIdx").val();
     var childIdx = $(this).val();
-     location.href="/?parentsIdx="+parentsIdx+"&childIdx="+childIdx;
+     location.href="/main?parentsIdx="+parentsIdx+"&childIdx="+childIdx;
   });
 
 </script>
