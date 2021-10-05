@@ -34,7 +34,7 @@ public class MainController {
      * 메인화면
      * @return
      */
-    @GetMapping("/")
+    @GetMapping("/main")
     public String main(HttpServletRequest req, Model model){
 
         String parentsIdx = req.getParameter("parentsIdx");
@@ -221,7 +221,7 @@ public class MainController {
      * story 페이지
      * @return
      */
-    @GetMapping("/story")
+    @GetMapping("/")
     public String story(HttpServletRequest req, Model model){
 
         String parentsIdx = req.getParameter("parentsIdx");
