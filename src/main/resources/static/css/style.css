@@ -765,3 +765,11 @@ select {
    color: whitesmoke !important;
    background: #000000 !important;
 }
+
+pre {
+  line-height: 1.7;
+  color: gray;
+  font-weight: 400;
+  font-size: 1rem;
+  background: #000;
+}
