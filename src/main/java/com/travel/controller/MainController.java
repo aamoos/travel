@@ -90,6 +90,17 @@ public class MainController {
     }
 
     /**
+     * 다운로드 홈페이지
+     * @param model
+     * @return
+     */
+    @GetMapping("/download")
+    public String download(Model model){
+
+        return "board/download";
+    }
+
+    /**
      * 글수정
      * @param model
      * @return
