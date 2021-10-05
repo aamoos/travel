@@ -43,7 +43,7 @@
             <div class="col-md-12">
               <pre th:text="${boardDetail.boardContent}">Similique deserunt sit accusamus ipsum optio. Quia, sapiente saepe culpa ad nemo velit, <a href="#">veritatis</a> numquam impedit voluptate quo tempore. Perferendis suscipit dolores, ducimus esse cupiditate possimus quae quis iusto rem?</pre>
               <p>
-                <a th:each=" hashTag, index : ${#strings.arraySplit(boardDetail.hashTag,',')}" href="#">#[[${hashTag}]] </a>
+                <a th:each=" hashTag, index : ${#strings.arraySplit(boardDetail.hashTag,',')}" href="#">#[[${hashTag}]]</a>
               </p>
             </div>
           </div>
