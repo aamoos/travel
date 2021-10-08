@@ -33,6 +33,13 @@
                     </div>
 
                     <div class="row form-group">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="text-white" for="datepicker">날짜</label>
+                            <input type="text" id="datepicker" class="form-control" width="276" />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
                       <div class="col-md-6 mb-3 mb-md-0">
                         <label class="text-white" for="boardTitle">제목</label>
                         <input type="text" id="boardTitle" class="form-control" th:value="${boardDetail.boardTitle}">
@@ -102,37 +109,42 @@
 
 <script th:inline="javascript">
 
-  //부모 지역 변경시
-  $(".parentsSelect").change(function(){
-    var parentsIdx = $(this).val();
-
-    $.ajax({
-      type : 'POST'
-      ,url : "/getChildDistrict"
-      ,dataType : 'json'
-      ,data : JSON.stringify(parentsIdx)
-      ,contentType: 'application/json'
-      ,success : function(result) {
-
-        var html = "";
-
-        for(var i=0; i<result.length; i++){
-          console.log(result[i]);
-          var childIdx = result[i].childIdx;
-          var districtName = result[i].districtName;
-          html+= "<option value='"+childIdx+"'>"+districtName+"</option>"
-        }
-        console.log(html);
-        $(".childSelect").html(html);
-
-      },
-      error: function(request, status, error) {
-
-      }
+    $('#datepicker').datepicker({
+        uiLibrary: 'bootstrap4'
+        ,format: 'yyyy-mm-dd'
     });
-  });
 
-  var fileCount = 0;
+    //부모 지역 변경시
+    $(".parentsSelect").change(function(){
+        var parentsIdx = $(this).val();
+
+        $.ajax({
+            type : 'POST'
+            ,url : "/getChildDistrict"
+            ,dataType : 'json'
+            ,data : JSON.stringify(parentsIdx)
+            ,contentType: 'application/json'
+            ,success : function(result) {
+                var html = "";
+
+                for(var i=0; i<result.length; i++){
+                    console.log(result[i]);
+                    var childIdx = result[i].childIdx;
+                    var districtName = result[i].districtName;
+                    html+= "<option value='"+childIdx+"'>"+districtName+"</option>"
+                }
+
+                console.log(html);
+                $(".childSelect").html(html);
+            },
+
+            error: function(request, status, error) {
+
+            }
+        });
+    });
+
+    var fileCount = 0;
 
 	//전체 업로드 갯수
 	var totalCount = 10;
@@ -168,49 +180,47 @@
 	}
 
 	//파일 change 이벤트
-	function fileChange(target){
+    function fileChange(target){
+        var files = target.files;
 
-      var files = target.files;
+        //파일 배열 담기
+        var filesArr = Array.prototype.slice.call(files);
 
-      //파일 배열 담기
-      var filesArr = Array.prototype.slice.call(files);
+        if(fileCount + filesArr.length > totalCount){
+            alert("파일은 최대 "+totalCount+"개까지 업로드 할 수 있습니다.");
+            return false;
+        }
 
-      if(fileCount + filesArr.length > totalCount){
-          alert("파일은 최대 "+totalCount+"개까지 업로드 할 수 있습니다.");
-          return false;
-      }
+        else{
+            fileCount = fileCount + filesArr.length;
+        }
 
-      else{
-          fileCount = fileCount + filesArr.length;
-      }
+        // 각각의 파일 배열담기 및 기타
+        filesArr.forEach(function (f) {
+            var imageUrl = URL.createObjectURL(f);
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                content_files.push(f);
+                console.log(content_files)
+                $('#articlefileChange').append(
+                    '<div id="file' + fileNum + '" onclick="fileDelete(\'file' + fileNum + '\')">'
+                    + "<img src = '"+imageUrl+"' style='width:300px; height:auto; vertical-align: middle; cursor: pointer;'></img>"
+                    + "<br>"
+                    + '<font style="font-size:12px">' + f.name + '</font>'
+                    + '<div/>'
+                );
+                fileNum++;
+            };
+            reader.readAsDataURL(f);
+        });
 
-      // 각각의 파일 배열담기 및 기타
-      filesArr.forEach(function (f) {
-          var imageUrl = URL.createObjectURL(f);
-          var reader = new FileReader();
-          reader.onload = function (e) {
-          content_files.push(f);
-          console.log(content_files)
-          $('#articlefileChange').append(
-              '<div id="file' + fileNum + '" onclick="fileDelete(\'file' + fileNum + '\')">'
-              + "<img src = '"+imageUrl+"' style='width:300px; height:auto; vertical-align: middle; cursor: pointer;'></img>"
-              + "<br>"
-              + '<font style="font-size:12px">' + f.name + '</font>'
-              + '<div/>'
-          );
-          fileNum++;
-        };
-        reader.readAsDataURL(f);
-      });
+        //초기화 한다.
+        $("#input_file").val("");
+    }
 
-      //초기화 한다.
-      $("#input_file").val("");
-
-	}
-
-	//파일 삭제
-	function fileDelete(fileNum){
-		var no = fileNum.replace(/[^0-9]/g, "");
+    //파일 삭제
+    function fileDelete(fileNum){
+        var no = fileNum.replace(/[^0-9]/g, "");
 	    content_files[no].is_delete = true;
 		$('#' + fileNum).remove();
 		fileCount --;
@@ -218,53 +228,55 @@
 
 	//파일 저장
 	function registerAction(){
-		console.log(content_files);
+        console.log(content_files);
 		var form = $("form")[0];
 	 	var formData = new FormData(form);
 	 	console.log(formData);
 		for (var x = 0; x < content_files.length; x++) {
-			// 삭제 안한것만 담아 준다.
-			if(!content_files[x].is_delete){
-				 formData.append("article_file", content_files[x]);
-				 formData.append("filePath", "/main");
-			}
-		}
+            // 삭제 안한것만 담아 준다.
+            if(!content_files[x].is_delete){
+                formData.append("article_file", content_files[x]);
+                formData.append("filePath", "/main");
+            }
+        }
 
-	   /*
-	   * 파일업로드 multiple ajax처리
-	   */
-		$.ajax({
-	   	      type: "POST",
-	   	   	  enctype: "multipart/form-data",
-	   	      url: "/file-upload",
-	       	  data : formData,
-	       	  processData: false,
-	   	      contentType: false,
-	   	      success: function (data) {
-
+        /*
+        * 파일업로드 multiple ajax처리
+        */
+        $.ajax({
+            type: "POST",
+            enctype: "multipart/form-data",
+            url: "/file-upload",
+            data : formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
                 console.log("파일저장 리턴 param")
-	   	    	console.log(data)
+                console.log(data)
 	   	    	console.log("파일저장 리턴 param")
 	   	    	//파일 시퀀스들
 	   	    	fileIdxs = data.fileIdxs;
 	   	    	if(data.result == "OK"){
 	   	    		updateSubmit();
-				} else
-					alert("서버내 오류로 처리가 지연되고있습니다. 잠시 후 다시 시도해주세요");
-	   	      },
-	   	      error: function (xhr, status, error) {
-	   	    	alert("서버오류로 지연되고있습니다. 잠시 후 다시 시도해주시기 바랍니다.");
-			}
-		});
-	}
+				}
 
-  //게시판 등록
-	function updateSubmit(){
+				else{
+                    alert("서버내 오류로 처리가 지연되고있습니다. 잠시 후 다시 시도해주세요");
+                }
+            },
 
-		//step2. 게시판 등록
-		var params = {
-			 parentsIdx : $(".parentsSelect").find("option:selected").val()
-			,childIdx : $(".childSelect").find("option:selected").val()
+            error: function (xhr, status, error) {
+                alert("서버오류로 지연되고있습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+            }
+        });
+    }
+
+    //게시판 등록
+    function updateSubmit(){
+        //step2. 게시판 등록
+        var params = {
+            parentsIdx : $(".parentsSelect").find("option:selected").val()
+            ,childIdx : $(".childSelect").find("option:selected").val()
 			,boardTitle : $.trim($("#boardTitle").val())
 			,boardContent : $.trim($("#boardContent").val())
 			,boardIdx : $("#boardIdx").val()
@@ -273,6 +285,7 @@
 			,fileIdxs : fileIdxs
 			,deleteFileIdxs : deleteFileIdxs.toString()
 			,attachCount : $("#articlefileChange").find("font").length
+			,viewDate : $("#datepicker").val()
 		}
 
 		if(params.boardTitle == ""){
@@ -286,8 +299,8 @@
 		}
 
 		$.ajax({
-	         type : 'POST'
-	        ,url : "/update"
+            type : 'POST'
+            ,url : "/update"
 	        ,dataType : 'json'
 	        ,data : JSON.stringify(params)
 	        ,contentType: 'application/json'

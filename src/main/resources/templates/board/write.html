@@ -33,6 +33,13 @@
 
                     <div class="row form-group">
                       <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="text-white" for="datepicker">날짜</label>
+                        <input type="text" id="datepicker" class="form-control" width="276" />
+                      </div>
+                    </div>
+
+                    <div class="row form-group">
+                      <div class="col-md-6 mb-3 mb-md-0">
                         <label class="text-white" for="boardTitle">제목</label>
                         <input type="text" id="boardTitle" class="form-control">
                       </div>
@@ -88,6 +95,11 @@
 
 <script th:inline="javascript">
 
+  $('#datepicker').datepicker({
+    uiLibrary: 'bootstrap4'
+    ,format: 'yyyy-mm-dd'
+  });
+
   //부모 지역 변경시
   $(".parentsSelect").change(function(){
     var parentsIdx = $(this).val();
@@ -99,9 +111,7 @@
       ,data : JSON.stringify(parentsIdx)
       ,contentType: 'application/json'
       ,success : function(result) {
-
         var html = "";
-
         for(var i=0; i<result.length; i++){
           console.log(result[i]);
           var childIdx = result[i].childIdx;
@@ -247,6 +257,7 @@
 			,useYn : "Y"
 			,fileIdxs : fileIdxs
 			,attachCount : $("#articlefileChange").find("font").length
+			,viewDate : $("#datepicker").val()
 		}
 
 		if(params.boardTitle == ""){

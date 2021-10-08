@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -38,6 +39,8 @@ public class Board {
 
     //첨부 파일 개수
     private int attachCount;
+
+    private String viewDate;
 
     //insert시에 현재시간을 읽어서 저장
     @CreationTimestamp

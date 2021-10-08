@@ -30,6 +30,7 @@
       <div th:each="boardDetail : ${boardDetail}" class="row justify-content-center">
         <div class="col-md-6 pt-4">
           <figure class="mb-5" data-aos="fade-up">
+            <h6 class="text-white mb-4" data-aos="fade-up">[[${boardDetail.viewDate}]]</h6>
             <a th:each=" fileIdxs, index : ${#strings.arraySplit(boardDetail.fileIdxs,',')}" th:href="@{/api/img/print/} + ${fileIdxs}" class="d-block photo-item" data-fancybox="gallery">
               <img th:if="${index.index == 0}" th:src="@{/api/img/print/} + ${fileIdxs}" alt="Image" class="img-fluid">
               <div class="photo-text-more">
