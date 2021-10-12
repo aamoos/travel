@@ -15,7 +15,6 @@
 # 개발되어있는부분
 > ### 이미지 뷰어, 멀티파일 이미지 등록, 수정, 글등록, 수정 
 
-![KakaoTalk_20211012_171015431](https://user-images.githubusercontent.com/37327676/136917728-ef3b517f-5e3a-4270-9e85-5cb193b76f38.jpg)
 ![KakaoTalk_20211012_171015650](https://user-images.githubusercontent.com/37327676/136917737-a4e4a840-0927-4540-8549-e4a9c9e9c3e8.jpg)
 ![KakaoTalk_20211012_171015856](https://user-images.githubusercontent.com/37327676/136917756-25e5022e-5217-47af-b726-2c81ab8a01a3.jpg)
 ![KakaoTalk_20211012_171016230](https://user-images.githubusercontent.com/37327676/136917766-baf8ae23-3cf8-47e8-aa14-5c769e630061.jpg)
