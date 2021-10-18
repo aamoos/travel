@@ -1,6 +1,5 @@
 package com.travel.reptositry;
 
-import com.travel.controller.MainController;
 import com.travel.entity.Board;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

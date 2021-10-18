@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.travel.util.RequestUtil;
 import com.travel.util.ResponseUtil;
 import com.travel.util.StringUtils;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.view.AbstractView;
-
 
 public class AttachDownloadView extends AbstractView {
 

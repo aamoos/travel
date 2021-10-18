@@ -8,15 +8,12 @@ import com.travel.reptositry.BoardRepository;
 import com.travel.reptositry.ChildDistrictRepository;
 import com.travel.reptositry.ParentsDistrictRepository;
 import com.travel.service.BoardService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller

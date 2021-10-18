@@ -1,7 +1,6 @@
 package com.travel.entity;
 
 import lombok.Getter;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
