@@ -51,17 +51,14 @@ public class MainController {
         List<BoardFile> galleryList = null;
 
         if(isStringEmpty(parentsIdx) && isStringEmpty(childIdx)){
-            System.out.println("1번");
             galleryList = boardFileRepository.findAllByGalleryList();
         }
 
         else if(!isStringEmpty(parentsIdx) && isStringEmpty(childIdx)){
-            System.out.println("2번");
             galleryList = boardFileRepository.findAllByParentsIdx(parentsIdx);
         }
 
         else{
-            System.out.println("3번");
             galleryList = boardFileRepository.findAllByParentsIdxAndChildIdx(parentsIdx, childIdx);
         }
 
@@ -96,7 +93,6 @@ public class MainController {
      */
     @GetMapping("/download")
     public String download(Model model){
-
         return "board/download";
     }
 
@@ -128,10 +124,7 @@ public class MainController {
     @ResponseBody
     @PostMapping("/write")
     public Long writeSubmit(@RequestBody Board board){
-        log.info("params={}", board);
-
         //fileIdxs 가공
-
         if(!isStringEmpty(board.getFileIdxs())){
             board.setFileIdxs(((String) board.getFileIdxs()).replace("[", "").replace("]", "").replaceAll(" ",""));
         }
@@ -147,7 +140,6 @@ public class MainController {
         //board 파일 테이블 insert
         boardService.insertBoardFile(board);
 
-
         return boardIdx;
     };
 
@@ -159,8 +151,6 @@ public class MainController {
     @ResponseBody
     @PostMapping("/update")
     public Long updateSubmit(@RequestBody Board board){
-        log.info("params={}", board);
-
         if(!isStringEmpty(board.getFileIdxs())){
             board.setFileIdxs(((String) board.getFileIdxs()).replace("[", "").replace("]", "").replaceAll(" ",""));
         }
@@ -174,17 +164,13 @@ public class MainController {
         //board 파일 테이블 insert
         boardService.insertBoardFile(board);
 
-        System.out.println("deleteFileIdxs : " + board.getDeleteFileIdxs());
-
         //넘어온 파일 삭제 시퀀스 삭제처리
         if(!board.getDeleteFileIdxs().isEmpty()){
             String deleteFileIdxs = (String) board.getDeleteFileIdxs();
             String[] fileIdxsArray = deleteFileIdxs.split(",");
-            System.out.println("fileIdxsArray : " + fileIdxsArray);
             //해당 시퀀스 삭제처리
             for(int i=0; i<fileIdxsArray.length; i++){
                 String fileId = fileIdxsArray[i];
-                System.out.println("fileId : " + fileId);
                 boardService.deleteBoardFile(Long.parseLong(fileId));
             }
         }
@@ -195,13 +181,8 @@ public class MainController {
     @ResponseBody
     @PostMapping("/delete")
     public Long deleteSubmit(@RequestBody Board board){
-        log.info("params={}", board);
-
-        System.out.println("머야 : " + board.getBoardIdx());
         //board 게시판 테이블 insert
-         boardService.deleteBoard(board);
-
-
+        boardService.deleteBoard(board);
         return board.getBoardIdx();
     };
 
@@ -213,7 +194,6 @@ public class MainController {
     @ResponseBody
     @PostMapping("/getChildDistrict")
     public List<ChildDistrict> getChildDistrict(@RequestBody Long parentsIdx){
-        log.info("parentsIdx={}", parentsIdx);
         return childDistrictRepository.findByParentsIdxAndUseYn(parentsIdx, "Y");
     }
 
@@ -243,18 +223,15 @@ public class MainController {
         }
 
         else if(!isStringEmpty(parentsIdx) && isStringEmpty(childIdx)){
-            System.out.println("2번");
             boardDetail = boardRepository.findAllByParentsIdx(parentsIdx);
         }
 
         else{
-            System.out.println("3번");
             boardDetail = boardRepository.findAllByParentsIdxAndChildIdx(parentsIdx, childIdx);
         }
 
         model.addAttribute("boardDetail", boardDetail);
         model.addAttribute("totalSize", boardDetail.size());
-        System.out.println(boardDetail.size());
         return "board/story";
     }
 

@@ -63,7 +63,6 @@ public class FileService {
 
                         //파일 insert
                         Long fileId = fileService.insertFile(file);
-                        log.info("fileId={}", fileId);
 
                         try {
                             InputStream fileStream = file1.getInputStream();

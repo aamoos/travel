@@ -41,8 +41,6 @@ public class FileController {
     public Map<String, Object> fileUpload(
             @RequestParam(value = "article_file", required = false) List<MultipartFile> multipartFile
             , HttpServletRequest request) throws IOException {
-
-        log.info("파일 컨트롤러 진입");
         return fileService.uploadFile(request, multipartFile);
     }
 
@@ -111,5 +109,4 @@ public class FileController {
         }
         return mav;
     }
-
 }
