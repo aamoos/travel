@@ -37,7 +37,6 @@ public class BoardService {
 
             for (int i=0; i<fileIdxArray.length; i++) {
                 String fileIdx = fileIdxArray[i];
-                System.out.println("fileIdx : " + fileIdx);
                 BoardFile boardFile = new BoardFile(board.getBoardIdx(), Long.parseLong(fileIdx),"Y") ;
                 boardFileRepository.save(boardFile);
             }

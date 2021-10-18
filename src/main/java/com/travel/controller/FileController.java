@@ -91,9 +91,7 @@ public class FileController {
     //첨부파일 image 보여주는 api
     @GetMapping(value = {"/api/img/print/{idx}"})
     public ModelAndView getPublicImage(@PathVariable("idx") Long idx, HttpServletResponse res) {
-        System.out.println("타니?");
         com.travel.entity.File file = fileRepository.findByFileIdx(idx);
-        System.out.println(file.getLogiPath()+file.getLogiNm());
         File initialFile = new File(file.getLogiPath()+file.getLogiNm());
 
         ModelAndView mav = new ModelAndView();
