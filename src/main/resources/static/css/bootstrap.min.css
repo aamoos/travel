@@ -169,7 +169,8 @@ pre {
   margin-bottom: 1rem;
   overflow: auto;
   -ms-overflow-style: scrollbar;
-  white-space: pre-line;
+  white-space: pre-wrap;
+  padding: 10px;
   }
 
 figure {
